@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kişisel Fitness Takip Uygulaması</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <!-- Mobile Menu Toggle -->
+    <button class="mobile-menu-toggle" onclick="toggleMobileMenu()">
+        <i class="fas fa-bars"></i>
+    </button>
+    
+    <!-- Mobile Overlay -->
+    <div class="mobile-overlay" onclick="closeMobileMenu()"></div>
+    
+    <div class="container">
+        <aside class="sidebar" id="sidebar">
+            <div class="logo">
+                <h1>Fitness Takip</h1>
+            </div>
+            <nav>
+                <a href="#" onclick="showSection('dashboard')" class="active"><i class="fas fa-tachometer-alt"></i> Gösterge Paneli</a>
+                <a href="#" onclick="showSection('workout')"><i class="fas fa-dumbbell"></i> Antrenman Programı</a>
+                <a href="#" onclick="showSection('nutrition')"><i class="fas fa-utensils"></i> Beslenme Takibi</a>
+                <a href="#" onclick="showSection('progress')"><i class="fas fa-chart-line"></i> Gelişim Takibi</a>
+                <a href="#" onclick="showSection('history')"><i class="fas fa-history"></i> Geçmiş</a>
+                <a href="#" onclick="showSection('water-history')"><i class="fas fa-tint"></i> Su Geçmişi</a>
+                <a href="#" onclick="showSection('step-history')"><i class="fas fa-walking"></i> Adım Geçmişi</a>
+            </nav>
+        </aside>
+
+        <main class="main-content">
+            <header>
+                <div class="header-content">
+                    <div class="profile-section">
+                        <div class="profile-photo" onclick="changeProfilePhoto()">
+                            <img id="profileImage" src="https://images.pexels.com/photos/1681010/pexels-photo-1681010.jpeg?auto=compress&cs=tinysrgb&w=100&h=100&fit=crop" alt="Profil">
+                            <div class="photo-overlay">
+                                <i class="fas fa-camera"></i>
+                            </div>
+                        </div>
+                        <div class="welcome-text">
+                            <h2>Hoş Geldiniz!</h2>
+                            <p id="userName">Kullanıcı Adı</p>
+                            <button onclick="editUserName()" class="edit-name-btn">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="current-date">
+                        <i class="fas fa-calendar-alt"></i>
+                        <span id="currentDate"></span>
+                    </div>
+                </div>
+            </header>
+
+            <section id="dashboard" class="section active">
+                <div class="dashboard-overview">
+                    <div class="card" onclick="showCaloriesBurnedBreakdown()">
+                        <h3>Yakılan Kalori</h3>
+                        <p id="caloriesBurnedValue">0</p>
+                        <div class="progress-bar">
+                            <div class="progress-fill" id="burnedProgress"></div>
+                        </div>
+                        <small>Hedef: 1000 kcal</small>
+                    </div>
+                    <div class="card" onclick="showCaloriesEatenBreakdown()">
+                        <h3>Alınan Kalori</h3>
+                        <p id="caloriesEatenValue">0</p>
+                        <div class="progress-bar">
+                            <div class="progress-fill" id="eatenProgress"></div>
+                        </div>
+                        <small>Hedef: 1500 kcal</small>
+                    </div>
+                    <div class="card">
+                        <h3>Atılan Adım</h3>
+                        <p id="stepsTakenValue">0</p>
+                        <div class="progress-bar">
+                            <div class="progress-fill" id="stepsProgress"></div>
+                        </div>
+                        <small>Hedef: 15.000</small>
+                    </div>
+                    <div class="card">
+                        <h3>İçilen Su</h3>
+                        <p id="waterDrankValue">0 L</p>
+                        <div class="progress-bar">
+                            <div class="progress-fill" id="waterProgress"></div>
+                        </div>
+                        <small>Hedef: 3 L</small>
+                    </div>
+                </div>
+
+                <div class="dashboard-actions">
+                    <div class="action-card">
+                        <h4>Adım Ekle</h4>
+                        <input type="number" id="stepsInput" placeholder="Adım sayısı">
+                        <button onclick="addSteps()">Ekle</button>
+                    </div>
+                    <div class="action-card">
+                        <h4>Su Ekle (Litre)</h4>
+                        <input type="number" id="waterInput" step="0.1" placeholder="Litre">
+                        <button onclick="addWater()">Ekle</button>
+                    </div>
+                </div>
+                <div class="chart-container">
+                    <canvas id="dashboardChart"></canvas>
+                </div>
+            </section>
+
+            <section id="workout" class="section">
+                <h2>Antrenman Programı</h2>
+                <div id="workoutAccordion" class="accordion">
+                </div>
+            </section>
+
+            <section id="nutrition" class="section">
+                <h2>Beslenme Takibi</h2>
+                <form id="foodForm" class="nutrition-form">
+                    <div class="form-group">
+                        <label for="foodCategory">Kategori:</label>
+                        <select id="foodCategory" required>
+                            <option value="">Kategori Seçin</option>
+                            <option value="Kahvaltı">Kahvaltı</option>
+                            <option value="Öğle Yemeği">Öğle Yemeği</option>
+                            <option value="Ara Öğün">Ara Öğün</option>
+                            <option value="Akşam Yemeği">Akşam Yemeği</option>
+                            <option value="İçecek">İçecek</option>
+                            <option value="Suplement">Suplement</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="foodName">Yemek Adı:</label>
+                        <input type="text" id="foodName" list="foodNames" placeholder="Yemek Adı Seçin veya Girin" required>
+                        <datalist id="foodNames"></datalist>
+                    </div>
+                    <div class="form-group">
+                        <label for="foodGram">Miktar (gram):</label>
+                        <input type="number" id="foodGram" step="1" placeholder="Örn: 150" required>
+                    </div>
+                    <button type="submit">Besin Ekle</button>
+                </form>
+                <h3>Tüketim Raporu</h3>
+                <div id="nutritionReport" class="nutrition-report">
+                </div>
+            </section>
+
+            <section id="progress" class="section">
+                <h2>Gelişim Takibi</h2>
+                <form id="progressForm" class="progress-form">
+                    <div class="form-group">
+                        <label for="progressDate">Tarih:</label>
+                        <input type="date" id="progressDate" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="weight">Kilo (kg):</label>
+                        <input type="number" id="weight" step="0.1" placeholder="Örn: 75.5" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="chest">Göğüs (cm):</label>
+                        <input type="number" id="chest" step="0.1" placeholder="Örn: 100" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="waist">Bel (cm):</label>
+                        <input type="number" id="waist" step="0.1" placeholder="Örn: 80" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="biceps">Kol (cm):</label>
+                        <input type="number" id="biceps" step="0.1" placeholder="Örn: 35" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="shoulder">Omuz (cm):</label>
+                        <input type="number" id="shoulder" step="0.1" placeholder="Örn: 45" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="leg">Bacak (cm):</label>
+                        <input type="number" id="leg" step="0.1" placeholder="Örn: 60" required>
+                    </div>
+                    <button type="submit">Kaydet</button>
+                </form>
+                <h3>Gelişim Raporu</h3>
+                <div id="progressList" class="progress-list">
+                </div>
+                <div class="chart-container">
+                    <canvas id="progressChart"></canvas>
+                </div>
+            </section>
+
+            <section id="history" class="section">
+                <h2>Geçmiş</h2>
+                <div id="historyList" class="history-list">
+                </div>
+            </section>
+
+            <section id="water-history" class="section">
+                <h2>Su Geçmişi</h2>
+                <div id="waterHistoryList" class="history-list">
+                </div>
+            </section>
+
+            <section id="step-history" class="section">
+                <h2>Adım Geçmişi</h2>
+                <div id="stepHistoryList" class="history-list">
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
